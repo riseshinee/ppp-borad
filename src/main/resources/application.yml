@@ -1,0 +1,39 @@
+spring:
+  profiles:
+    active: local
+  freemarker:
+    cache: false
+    template-loader-path: classpath:/templates
+    suffix: .ftl
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health
+
+jpa:
+  properties:
+    hibernate:
+      show_sql: true
+      format_sql: true
+      ddl-auto: update
+
+---
+# local
+server:
+  port: 8081
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ppp_board?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
+    username: root
+    password: '00000000'
