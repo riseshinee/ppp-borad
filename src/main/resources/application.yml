@@ -37,3 +37,6 @@ spring:
     url: jdbc:mysql://localhost:3306/ppp_board?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
     username: root
     password: '00000000'
+
+pppboard:
+  db-crypto-key: sfocubekftcdbsha2key
