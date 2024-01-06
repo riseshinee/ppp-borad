@@ -37,3 +37,4 @@ out/
 .vscode/
 
 generated
+.DS_Store
