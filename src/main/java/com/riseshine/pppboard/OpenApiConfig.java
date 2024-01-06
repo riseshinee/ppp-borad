@@ -1,4 +1,4 @@
-package com.riseshine.pppboard.config;
+package com.riseshine.pppboard;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.servers.Server;
