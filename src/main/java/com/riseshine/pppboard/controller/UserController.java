@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.riseshine.pppboard.common.exception.CustomException;
 import com.riseshine.pppboard.service.UserService;
@@ -33,6 +30,14 @@ public class UserController {
     public ResponseWrapper<UserCreateResDTO> saveUser(@RequestBody @Valid UserCraeteReqDTO user) throws Exception {
         ResponseWrapper<UserCreateResDTO> responseWrapper = new ResponseWrapper<>();
         responseWrapper.setData(userService.saveUser(user));
+        return responseWrapper;
+    }
+
+    @PutMapping("/{no}")
+    @Operation(summary = "회원정보수정")
+    public ResponseWrapper<Integer> putUser(@PathVariable("no") Integer no, @RequestBody @Valid UserUpdateReqDTO user) throws Exception {
+        ResponseWrapper<Integer> responseWrapper = new ResponseWrapper<>();
+        responseWrapper.setData(userService.putUser(no,user));
         return responseWrapper;
     }
 }
