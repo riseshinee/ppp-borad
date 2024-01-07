@@ -19,7 +19,7 @@ public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "no")
-    String no;
+    Integer no;
 
     /**
      * User Id

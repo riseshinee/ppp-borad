@@ -21,6 +21,12 @@ public class UserService {
 
   private final UserRepository userRepository;
 
+  /**
+   * 회원 정보 생성 (회원가입)
+   * @param createUserDto
+   * @return
+   * @throws Exception
+   */
   public UserCreateResDTO saveUser(UserCraeteReqDTO createUserDto) throws Exception {
     // 아이디 중복체크
     boolean checkIdResult = checkSameIdExists(createUserDto.getId());
@@ -37,12 +43,27 @@ public class UserService {
 
     }
 
+  public Integer putUser(Integer no, UserUpdateReqDTO updateUserDto) throws Exception {
+    //유저 조회
+    User user = userRepository.findFirstByNo(no);
+
+    if(user == null){
+      throw new CustomException("회원 정보가 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
+    }
+
+    userRepository.updateByNo(no,
+            updateUserDto.getName(),
+            CommonUtil.dbEncrypt(updateUserDto.getPassword()));
+
+    return no;
+  }
+
     /**
      * 아이디 중복 체크
      * @param id
      * @return
      */
-    public boolean checkSameIdExists(String id) {
+    private boolean checkSameIdExists(String id) {
       User user = userRepository.findFirstById(id);
       //중복된 아이디가 없으면 false, 존재하면 true;
       return user != null;
@@ -60,5 +81,12 @@ public class UserService {
               .passsword(CommonUtil.dbEncrypt(createUserDto.getPassword()))
               .build();
     }
+
+  private User updatePendingUser(UserUpdateReqDTO updateUserDto) {
+    return User.builder()
+            .name(updateUserDto.getName())
+            .passsword(CommonUtil.dbEncrypt(updateUserDto.getPassword()))
+            .build();
+  }
 
 }
