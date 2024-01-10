@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
   User findFirstByNo(Integer no);
 
   @Modifying
-  @Query(value = "UPDATE `User` SET name=?2, password=?3 WHERE id=?1", nativeQuery = true)
+  @Query(value = "UPDATE `User` SET name= :name, password= :password WHERE no= :no", nativeQuery = true)
   void updateByNo(Integer no, String name, String password);
 
 }
