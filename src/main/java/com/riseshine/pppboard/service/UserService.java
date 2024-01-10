@@ -58,6 +58,21 @@ public class UserService {
     return no;
   }
 
+  public UserGetResDTO getUser(int no) throws Exception {
+    User user = userRepository.findFirstByNo(no);
+
+    if(user == null){
+      throw new CustomException("회원 정보가 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
+    }
+
+    return UserGetResDTO.builder()
+            .id(user.getId())
+            .name(user.getName())
+            .createdAt(user.getCreatedAt())
+            .build();
+
+  }
+
     /**
      * 아이디 중복 체크
      * @param id
@@ -82,11 +97,5 @@ public class UserService {
               .build();
     }
 
-  private User updatePendingUser(UserUpdateReqDTO updateUserDto) {
-    return User.builder()
-            .name(updateUserDto.getName())
-            .passsword(CommonUtil.dbEncrypt(updateUserDto.getPassword()))
-            .build();
-  }
 
 }
