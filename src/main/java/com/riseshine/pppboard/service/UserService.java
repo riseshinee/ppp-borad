@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Objects;
 
 import com.riseshine.pppboard.common.exception.CustomException;
 import com.riseshine.pppboard.common.utils.CommonUtil;
 
+import com.riseshine.pppboard.provider.JwtTokenProvider;
 import com.riseshine.pppboard.controller.userDto.*;
 import com.riseshine.pppboard.domain.User;
 import com.riseshine.pppboard.dao.UserRepository;
@@ -19,6 +21,7 @@ import com.riseshine.pppboard.dao.UserRepository;
 @RequiredArgsConstructor
 public class UserService {
 
+  private final JwtTokenProvider jwtTokenProvider;
   private final UserRepository userRepository;
 
   /**
@@ -29,10 +32,9 @@ public class UserService {
    */
   public UserCreateResDTO saveUser(UserCraeteReqDTO createUserDto) throws Exception {
     // 아이디 중복체크
-    boolean checkIdResult = checkSameIdExists(createUserDto.getId());
-    if(checkIdResult) {
-      throw new CustomException("중복된 아이디가 존재합니다.", HttpStatus.BAD_REQUEST);
-    }
+    checkSameIdExists(createUserDto.getId());
+
+    //유저 객체 생성, 저장
     User user = createPendingUser(createUserDto);
     userRepository.save(user);
 
@@ -40,17 +42,21 @@ public class UserService {
             .id(user.getId())
             .name(user.getName())
             .build();
-
     }
 
+  /**
+   * 회원 정보 업데이트
+   * @param no
+   * @param updateUserDto
+   * @return
+   * @throws Exception
+   */
   public Integer putUser(Integer no, UserUpdateReqDTO updateUserDto) throws Exception {
     //유저 조회
-    User user = userRepository.findFirstByNo(no);
+    userRepository.findFirstByNo(no).orElseThrow(() ->
+            new CustomException("회원 정보가 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
 
-    if(user == null){
-      throw new CustomException("회원 정보가 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
-    }
-
+    //유저 정보 업데이트
     userRepository.updateByNo(no,
             updateUserDto.getName(),
             CommonUtil.dbEncrypt(updateUserDto.getPassword()));
@@ -58,12 +64,15 @@ public class UserService {
     return no;
   }
 
+  /**
+   * 회원 정보 조회
+   * @param no
+   * @return
+   * @throws Exception
+   */
   public UserGetResDTO getUser(int no) throws Exception {
-    User user = userRepository.findFirstByNo(no);
-
-    if(user == null){
-      throw new CustomException("회원 정보가 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
-    }
+    User user = userRepository.findFirstByNo(no).orElseThrow(() ->
+            new CustomException("회원 정보가 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
 
     return UserGetResDTO.builder()
             .id(user.getId())
@@ -73,15 +82,22 @@ public class UserService {
 
   }
 
+  public String login(UserLoginReqDTO loginUserDto) throws Exception {
+    //아이디, 비밀번호 일치 확인
+    User user = validateUser(loginUserDto);
+
+    //token 생성
+    return jwtTokenProvider.createToken(user.getId());
+  }
+
     /**
      * 아이디 중복 체크
      * @param id
      * @return
      */
-    private boolean checkSameIdExists(String id) {
-      User user = userRepository.findFirstById(id);
-      //중복된 아이디가 없으면 false, 존재하면 true;
-      return user != null;
+    private void checkSameIdExists(String id) {
+     userRepository.findFirstById(id).orElseThrow(() ->
+             new CustomException("중복된 아이디가 존재합니다.", HttpStatus.BAD_REQUEST));
     }
 
     /**
@@ -97,5 +113,21 @@ public class UserService {
               .build();
     }
 
+  /**
+   * 로그인 시 유저 유효성 검증
+   * @param loginUserDto
+   * @return
+   */
+  private User validateUser(UserLoginReqDTO loginUserDto) throws Exception {
+      User user = userRepository.findFirstById(loginUserDto.getId()).orElseThrow(() ->
+              new CustomException("아이디가 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
+
+      String getPassword = CommonUtil.dbDecrypt(user.getPasssword());
+      if(!Objects.equals(getPassword, loginUserDto.getPassword())){
+        throw new CustomException("비밀번호가 일치하지 않습니다..", HttpStatus.BAD_REQUEST);
+      }
+
+      return user;
+    }
 
 }
