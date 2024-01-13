@@ -96,8 +96,9 @@ public class UserService {
      * @return
      */
     private void checkSameIdExists(String id) {
-     userRepository.findFirstById(id).orElseThrow(() ->
-             new CustomException("중복된 아이디가 존재합니다.", HttpStatus.BAD_REQUEST));
+     userRepository.findFirstById(id).ifPresent(user -> {
+        throw new CustomException("중복된 아이디가 존재합니다.", HttpStatus.BAD_REQUEST);
+      });
     }
 
     /**

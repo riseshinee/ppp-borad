@@ -5,19 +5,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import com.riseshine.pppboard.common.exception.CustomException;
 import com.riseshine.pppboard.service.UserService;
 import com.riseshine.pppboard.controller.userDto.*;
 
-/**
- * 회원가입, Controller Class
- */
 @Slf4j
 @RestController
 @RequestMapping("/api/user")
@@ -52,6 +44,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "로그인")
     public ResponseWrapper<String> login(@RequestBody @Valid UserLoginReqDTO user) throws Exception {
         ResponseWrapper<String> responseWrapper = new ResponseWrapper<>();
         responseWrapper.setData(userService.login(user));
