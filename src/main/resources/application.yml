@@ -5,6 +5,10 @@ spring:
     cache: false
     template-loader-path: classpath:/templates
     suffix: .ftl
+  security:
+      user:
+        name: user
+        password: 1234
 
 server:
   port: 8080
@@ -26,7 +30,7 @@ jpa:
 ---
 # local
 server:
-  port: 8081
+  port: 8080
 
 spring:
   config:

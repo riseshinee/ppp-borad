@@ -14,13 +14,14 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class WebSecurityConfig  {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-            .authorizeHttpRequests(authorizeRequests ->
-                    authorizeRequests
-                            .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/api/v1/login").permitAll()
+    http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                            .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/api/*").permitAll()
                             .anyRequest().authenticated()
+
+
             )
-            .httpBasic(withDefaults());
+            .httpBasic(withDefaults())
+            .csrf().disable();
 
     return http.build();
   }

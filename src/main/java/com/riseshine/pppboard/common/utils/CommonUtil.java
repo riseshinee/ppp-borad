@@ -1,12 +1,11 @@
 package com.riseshine.pppboard.common.utils;
 
-import jakarta.xml.bind.DatatypeConverter;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 
 import com.riseshine.pppboard.common.Constants;
 
@@ -23,7 +22,8 @@ public class CommonUtil {
     try {
       encryptCipher = Cipher.getInstance("AES");
       encryptCipher.init(Cipher.ENCRYPT_MODE, generateAESKey(getSHA256(Constants.DB_CRYPTO_KEY), "UTF-8"));
-      result = DatatypeConverter.printHexBinary(encryptCipher.doFinal(text.getBytes(StandardCharsets.UTF_8)));
+      byte[] encryptedBytes = encryptCipher.doFinal(text.getBytes(StandardCharsets.UTF_8));
+      result = Base64.getEncoder().encodeToString(encryptedBytes);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -42,7 +42,8 @@ public class CommonUtil {
     try {
       decryptCipher = Cipher.getInstance("AES");
       decryptCipher.init(Cipher.DECRYPT_MODE, generateAESKey(getSHA256(Constants.DB_CRYPTO_KEY), "UTF-8"));
-      result = new String(decryptCipher.doFinal(DatatypeConverter.parseHexBinary(text)));
+      byte[] decryptedBytes = decryptCipher.doFinal(Base64.getDecoder().decode(text));
+      result = new String(decryptedBytes, StandardCharsets.UTF_8);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -63,7 +64,7 @@ public class CommonUtil {
       for (byte b : key.getBytes(encoding))
         finalKey[i++ % 16] ^= b;
       return new SecretKeySpec(finalKey, "AES");
-    } catch (UnsupportedEncodingException e) {
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
@@ -86,5 +87,4 @@ public class CommonUtil {
       throw new RuntimeException(e);
     }
   }
-
 }
