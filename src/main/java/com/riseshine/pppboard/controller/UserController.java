@@ -2,6 +2,7 @@ package com.riseshine.pppboard.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,12 @@ public class UserController {
         ResponseWrapper<String> responseWrapper = new ResponseWrapper<>();
         responseWrapper.setData(userService.login(user));
         return responseWrapper;
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃")
+    public void logout(HttpSession session) {
+        session.invalidate();
     }
 
 }
