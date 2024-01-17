@@ -15,7 +15,7 @@ import com.riseshine.pppboard.controller.userDto.*;
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
-@Tag(name = "1-1. UserController", description = "유저 관리 API")
+@Tag(name = "1. UserController", description = "유저 관리 API")
 public class UserController {
 
     private final UserService userService;
@@ -57,5 +57,6 @@ public class UserController {
     public void logout(HttpSession session) {
         session.invalidate();
     }
+
 
 }
