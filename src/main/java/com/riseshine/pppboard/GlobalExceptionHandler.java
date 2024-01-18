@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   protected ResponseEntity<RestResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-    //log.error("handleMethodArgumentNotValidException", e);
+    log.error("handleMethodArgumentNotValidException", e);
     final RestResponse response = RestResponse.of(ResultCode.INVALID_INPUT_VALUE, e.getBindingResult());
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
