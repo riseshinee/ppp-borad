@@ -13,6 +13,8 @@ public class Constants {
     DB_CRYPTO_KEY = dbCryptoKey;
   }
 
+  public static String FILES_FOLDER_PATH = "upload_files/";
+
 
 
 }
