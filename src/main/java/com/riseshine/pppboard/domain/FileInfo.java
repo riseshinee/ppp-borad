@@ -11,11 +11,12 @@ import org.hibernate.annotations.DynamicUpdate;
 @Entity
 @Builder
 @Getter
+@Table(name = "file")
 @DynamicInsert
 @DynamicUpdate
 @NoArgsConstructor
 @AllArgsConstructor
-public class File extends BaseEntity{
+public class FileInfo extends BaseEntity{
   /**
    * no
    */
