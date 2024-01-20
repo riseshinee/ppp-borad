@@ -44,3 +44,13 @@ spring:
 
 pppboard:
   db-crypto-key: sfocubekftcdbsha2key
+
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: pppboard
+    credentials:
+        access-key: AKIAR76JUCXMW57E6MGJ
+        secret-key: 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

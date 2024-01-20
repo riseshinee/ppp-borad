@@ -2,6 +2,8 @@ package com.riseshine.pppboard.common.utils;
 
 import com.riseshine.pppboard.common.exception.CustomException;
 import org.springframework.http.HttpStatus;
+
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -35,6 +37,24 @@ public class FileUtil {
     String fileExtension = getFileExtension(originName);
     //랜덤 파일명 + 확장자
     return UUID.randomUUID() + fileExtension;
+  }
+
+  /**
+   * 현재 년도
+   * @return
+   */
+  public static String getCurrentYear() {
+    LocalDate currentDate = LocalDate.now();
+    return String.valueOf(currentDate.getYear());
+  }
+
+  /**
+   * 현재 월
+   * @return
+   */
+  public static String getCurrentMonth() {
+    LocalDate currentDate = LocalDate.now();
+    return String.valueOf(currentDate.getMonthValue());
   }
 
   /**

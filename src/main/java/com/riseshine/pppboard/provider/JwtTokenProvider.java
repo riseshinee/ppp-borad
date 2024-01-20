@@ -11,7 +11,6 @@ import io.jsonwebtoken.*;
 import java.util.Base64;
 import java.util.Date;
 
-import com.riseshine.pppboard.service.JwtService;
 import com.riseshine.pppboard.domain.User;
 
 @RequiredArgsConstructor

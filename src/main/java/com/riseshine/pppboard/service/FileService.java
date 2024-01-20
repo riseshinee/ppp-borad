@@ -16,6 +16,7 @@ import com.riseshine.pppboard.common.utils.FileUtil;
 import com.riseshine.pppboard.common.exception.CustomException;
 import com.riseshine.pppboard.dao.FileInfoRepository;
 import com.riseshine.pppboard.domain.FileInfo;
+import com.riseshine.pppboard.provider.AwsS3Service;
 
 @Service
 @Slf4j
@@ -23,6 +24,7 @@ import com.riseshine.pppboard.domain.FileInfo;
 @RequiredArgsConstructor
 public class FileService {
   private final FileInfoRepository fileInfoRepository;
+  private final AwsS3Service awsS3Service;
 
   /**
    * 첨부파일 유효성 체크
@@ -57,16 +59,17 @@ public class FileService {
         FileOutputStream fileOutputStream = new FileOutputStream(uploadFile);
         fileOutputStream.write(uploadFile.toString().getBytes());
         fileOutputStream.close();
-        //TODO: S3 버킷에 업로드
+        //s3 bucket 업로드
+        uploadS3(uploadFile, fileName);
         //db에 저장
         saveFile(postNo,++seq,fileName);
+        //로컬 파일 삭제
+        uploadFile.delete();
       }
 
     } catch (Exception e) {
-      log.error("파일 업로드 실패", e);
+      log.error("[FILE UPLOAD] failed:", e);
       throw new CustomException("파일 업로드 실패", HttpStatus.INTERNAL_SERVER_ERROR);
-    } finally {
-      //TODO: 로컬 경로에 있는 이미지 모두 제거
     }
   }
 
@@ -94,6 +97,19 @@ public class FileService {
             .seq(seq)
             .name(name)
             .build();
+  }
+
+  private void uploadS3(File file, String fileName) {
+    try {
+      String uploadPath = String.format("%s/%s/%s",
+              FileUtil.getCurrentYear(),
+              FileUtil.getCurrentMonth(),
+              fileName);
+      awsS3Service.uploadOriginFile(uploadPath, file);
+    } catch (Exception e) {
+      log.error("[AWS S3 UPLOAD] failed: {}", file.getName(), e);
+      throw new CustomException("AWS S3 upload failed", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
 }

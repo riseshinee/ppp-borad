@@ -1,4 +1,4 @@
-package com.riseshine.pppboard.service;
+package com.riseshine.pppboard.provider;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
