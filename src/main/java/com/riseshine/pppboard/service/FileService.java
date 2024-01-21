@@ -9,7 +9,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.riseshine.pppboard.common.Constants;
 import com.riseshine.pppboard.common.utils.FileUtil;
@@ -17,6 +20,7 @@ import com.riseshine.pppboard.common.exception.CustomException;
 import com.riseshine.pppboard.dao.FileInfoRepository;
 import com.riseshine.pppboard.domain.FileInfo;
 import com.riseshine.pppboard.provider.AwsS3Service;
+import com.riseshine.pppboard.controller.fileInfoDto.*;
 
 @Service
 @Slf4j
@@ -49,7 +53,7 @@ public class FileService {
    * @param files
    * @throws Exception
    */
-  public void uploadFile(Integer postNo, List<MultipartFile> files) throws Exception  {
+  public void uploadFile(int postNo, List<MultipartFile> files) throws Exception  {
     int seq = 0;
     try {
       for (MultipartFile file : files) {
@@ -74,12 +78,33 @@ public class FileService {
   }
 
   /**
+   * post_no를 기준으로 첨부파일 리스트 return
+   * @param postNo
+   * @return
+   * @throws ParseException
+   */
+  public List<FileInfoGetResDTO> getFilesByPostNo(int postNo) {
+    List<FileInfoGetResDTO> result = new ArrayList<>();
+    fileInfoRepository.findByPostNoOrderBySeqAsc(postNo).ifPresent(fileInfos -> {
+      for(FileInfo fileInfo: fileInfos) {
+        try {
+          FileInfoGetResDTO fileInfoDTO = getPendingFileInfo(fileInfo);
+          result.add(fileInfoDTO);
+        } catch (ParseException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    });
+    return result;
+  }
+
+  /**
    * 업로드한 파일 정보를 db에 저장
    * @param postNo
    * @param seq
    * @param name
    */
-  private void saveFile(Integer postNo, Integer seq, String name){
+  private void saveFile(int postNo, Integer seq, String name){
     FileInfo fileInfo = createPendingFileInfo(postNo,seq,name);
     fileInfoRepository.save(fileInfo);
   }
@@ -91,7 +116,7 @@ public class FileService {
    * @param name
    * @return
    */
-  private FileInfo createPendingFileInfo(Integer postNo, Integer seq, String name) {
+  private FileInfo createPendingFileInfo(int postNo, int seq, String name) {
     return FileInfo.builder()
             .postNo(postNo)
             .seq(seq)
@@ -99,6 +124,25 @@ public class FileService {
             .build();
   }
 
+  /**
+   * FileInfoGetResDTO 객체 생성
+   * @param fileinfo
+   * @return
+   * @throws ParseException
+   */
+  private FileInfoGetResDTO getPendingFileInfo(FileInfo fileinfo) throws ParseException {
+    return FileInfoGetResDTO.builder()
+            .seq(fileinfo.getSeq())
+            .name(fileinfo.getName())
+            .url(FileUtil.getFileUrl(fileinfo.getCreatedAt(),fileinfo.getName()))
+            .build();
+  }
+
+  /**
+   * 이미지를 S3 버킷에 업로드
+   * @param file
+   * @param fileName
+   */
   private void uploadS3(File file, String fileName) {
     try {
       String uploadPath = String.format("%s/%s/%s",

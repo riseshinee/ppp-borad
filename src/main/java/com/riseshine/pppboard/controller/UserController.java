@@ -38,7 +38,7 @@ public class UserController {
 
     @GetMapping("/{no}")
     @Operation(summary = "회원 정보 조회")
-    public ResponseWrapper<UserGetResDTO> getUser(@PathVariable("no") Integer no) throws Exception {
+    public ResponseWrapper<UserGetResDTO> getUser(@PathVariable("no") int no) throws Exception {
         ResponseWrapper<UserGetResDTO> responseWrapper = new ResponseWrapper<>();
         responseWrapper.setData(userService.getUser(no));
         return responseWrapper;
