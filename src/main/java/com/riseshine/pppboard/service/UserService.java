@@ -51,7 +51,7 @@ public class UserService {
    * @return
    * @throws Exception
    */
-  public Integer putUser(Integer no, UserUpdateReqDTO updateUserDto) throws Exception {
+  public int putUser(int no, UserUpdateReqDTO updateUserDto) throws Exception {
     //유저 조회
     userRepository.findFirstByNo(no).orElseThrow(() ->
             new CustomException("회원 정보가 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
@@ -85,7 +85,6 @@ public class UserService {
   public String login(UserLoginReqDTO loginUserDto) throws Exception {
     //아이디, 비밀번호 일치 확인
     User user = validateUser(loginUserDto);
-
     //token 생성
     return jwtTokenProvider.createToken(user.getId());
   }

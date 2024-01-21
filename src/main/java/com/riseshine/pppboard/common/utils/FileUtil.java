@@ -1,9 +1,13 @@
 package com.riseshine.pppboard.common.utils;
 
+import com.riseshine.pppboard.common.Constants;
 import com.riseshine.pppboard.common.exception.CustomException;
 import org.springframework.http.HttpStatus;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -11,7 +15,7 @@ public class FileUtil {
   private static final String[] IMAGE_EXT = {".jpg", ".jpeg", ".png", ".gif", ".bmp"};
   /**
    * 파일 확장자 검증
-   * @param extension
+   * @param originName
    * @return
    */
   public static boolean isImageExtension(String originName) {
@@ -37,6 +41,18 @@ public class FileUtil {
     String fileExtension = getFileExtension(originName);
     //랜덤 파일명 + 확장자
     return UUID.randomUUID() + fileExtension;
+  }
+
+  /**
+   * 생성시간, 파일명을 이용하여 첨부 이미지 URL return
+   * @param createdAt
+   * @param fileName
+   * @return
+   * @throws ParseException
+   */
+  public static String getFileUrl(String createdAt, String fileName) throws ParseException {
+    String yearMonth = getFileYearMonth(createdAt);
+    return Constants.AWS_S3_CLOUDFRONT_URL + yearMonth + "/" + fileName;
   }
 
   /**
@@ -66,4 +82,16 @@ public class FileUtil {
     return Objects.requireNonNull(originName).substring(originName.lastIndexOf("."));
   }
 
+  /**
+   * 생성시간을 기준으로 yyyy/m으로 return
+   * @param inputDateTime
+   * @return
+   * @throws ParseException
+   */
+  private static String getFileYearMonth(String inputDateTime) throws ParseException {
+    SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy/M");
+    Date date = inputFormat.parse(inputDateTime);
+    return outputFormat.format(date);
+  }
 }

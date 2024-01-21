@@ -12,7 +12,7 @@ import com.riseshine.pppboard.common.exception.ErrorMessage;
 public class ResponseWrapper<T> extends ErrorMessage {
 
     private T data;
-    private Integer status;
+    private int status;
     private String code;
 
     public ResponseWrapper() {
