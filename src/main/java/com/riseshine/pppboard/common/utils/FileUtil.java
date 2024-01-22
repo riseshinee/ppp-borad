@@ -56,6 +56,18 @@ public class FileUtil {
   }
 
   /**
+   * 파일 삭제 시 사용
+   * @param createdAt
+   * @param fileName
+   * @return
+   * @throws ParseException
+   */
+  public static String getFilePath(String createdAt, String fileName) throws ParseException {
+    String yearMonth = getFileYearMonth(createdAt);
+    return yearMonth + "/" + fileName;
+  }
+
+  /**
    * 현재 년도
    * @return
    */
