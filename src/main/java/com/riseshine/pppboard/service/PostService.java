@@ -21,7 +21,7 @@ import java.util.List;
 public class PostService {
 
   private final PostRepository postRepository;
-  private final FileService fileService;
+  private final FileInfoService fileinfoService;
 
   /**
    * 게시글 생성
@@ -47,11 +47,20 @@ public class PostService {
             new CustomException("게시글이 존재하지 않습니다.", HttpStatus.BAD_REQUEST)
     );
     //첨부 이미지 리스트 return
-    List<FileInfoGetResDTO> fileInfos = fileService.getFilesByPostNo(no);
+    List<FileInfoGetResDTO> fileInfos = fileinfoService.getFilesByPostNo(no);
     PostGetResDTO result = getPendingPost(post);
     //첨부 이미지 리스트 추가
     result.setFileInfos(fileInfos);
     return result;
+  }
+
+  public int putPost(int no, String title, String content) {
+    //게시글 조회
+    postRepository.findFirstByNo(no).orElseThrow(() ->
+            new CustomException("게시글이 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
+    //게시글 업데이트
+    postRepository.updateByNo(no,title,content);
+    return no;
   }
 
   /**
