@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface FileInfoRepository extends JpaRepository<FileInfo, Integer>, JpaSpecificationExecutor<FileInfo> {
 
   Optional<List<FileInfo>> findByPostNoOrderBySeqAsc(int postNo);
+  Optional<FileInfo> findByNo(int no);
+  void deleteByNo(int no);
 }
