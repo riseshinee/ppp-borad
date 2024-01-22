@@ -12,7 +12,6 @@ import java.io.FileOutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import com.riseshine.pppboard.common.Constants;
 import com.riseshine.pppboard.common.utils.FileUtil;
@@ -26,7 +25,7 @@ import com.riseshine.pppboard.controller.fileInfoDto.*;
 @Slf4j
 @Transactional
 @RequiredArgsConstructor
-public class FileService {
+public class FileInfoService {
   private final FileInfoRepository fileInfoRepository;
   private final AwsS3Service awsS3Service;
 

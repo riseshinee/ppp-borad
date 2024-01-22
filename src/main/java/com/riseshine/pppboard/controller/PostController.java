@@ -1,6 +1,6 @@
 package com.riseshine.pppboard.controller;
 
-import com.riseshine.pppboard.service.FileService;
+import com.riseshine.pppboard.service.FileInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class PostController {
   private final UserService userService;
   private final PostService postService;
-  private final FileService fileService;
+  private final FileInfoService fileService;
   @PostMapping(value = "/{userNo}", consumes = "multipart/form-data")
   @Operation(summary = "게시글 생성")
   public ResponseWrapper<Integer> savePost(@PathVariable("userNo") int userNo,
@@ -52,4 +52,16 @@ public class PostController {
     responseWrapper.setData(postService.getPost(no));
     return responseWrapper;
   }
+
+  @PutMapping("/{no}")
+  @Operation(summary = "게시글 수정")
+  public ResponseWrapper<Integer> putPost(@PathVariable("no") Integer no,
+                                          @RequestParam("title") String title,
+                                          @RequestParam("content") String content) {
+    ResponseWrapper<Integer> responseWrapper = new ResponseWrapper<>();
+    responseWrapper.setData(postService.putPost(no, title, content));
+    return responseWrapper;
+  }
+
+
 }
