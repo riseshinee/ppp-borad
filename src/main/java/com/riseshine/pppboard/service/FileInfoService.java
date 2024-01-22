@@ -12,7 +12,6 @@ import java.io.FileOutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import com.riseshine.pppboard.common.Constants;
 import com.riseshine.pppboard.common.utils.FileUtil;
@@ -26,7 +25,7 @@ import com.riseshine.pppboard.controller.fileInfoDto.*;
 @Slf4j
 @Transactional
 @RequiredArgsConstructor
-public class FileService {
+public class FileInfoService {
   private final FileInfoRepository fileInfoRepository;
   private final AwsS3Service awsS3Service;
 
@@ -99,6 +98,24 @@ public class FileService {
   }
 
   /**
+   * 업로드 파일 삭제
+   * @param no
+   */
+  public void deleteFileByNo(int no) {
+    FileInfo fileInfo = fileInfoRepository.findByNo(no).orElseThrow(() ->
+            new CustomException("파일이 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
+    try {
+      String filePath = FileUtil.getFilePath(fileInfo.getCreatedAt(), fileInfo.getName());
+      //S3 버킷에서 제거
+      awsS3Service.deleteOriginFile(filePath);
+      //db에서 제거
+      fileInfoRepository.deleteByNo(no);
+    } catch (ParseException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
    * 업로드한 파일 정보를 db에 저장
    * @param postNo
    * @param seq
@@ -144,16 +161,11 @@ public class FileService {
    * @param fileName
    */
   private void uploadS3(File file, String fileName) {
-    try {
-      String uploadPath = String.format("%s/%s/%s",
-              FileUtil.getCurrentYear(),
-              FileUtil.getCurrentMonth(),
-              fileName);
-      awsS3Service.uploadOriginFile(uploadPath, file);
-    } catch (Exception e) {
-      log.error("[AWS S3 UPLOAD] failed: {}", file.getName(), e);
-      throw new CustomException("AWS S3 upload failed", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    String uploadPath = String.format("%s/%s/%s",
+            FileUtil.getCurrentYear(),
+            FileUtil.getCurrentMonth(),
+            fileName);
+    awsS3Service.uploadOriginFile(uploadPath, file);
   }
 
 }
