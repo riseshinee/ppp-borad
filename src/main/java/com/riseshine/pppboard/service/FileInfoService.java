@@ -47,29 +47,36 @@ public class FileInfoService {
   }
 
   /**
+   * 첨부파일 추가 시 유효성 검증
+   * @param postNo
+   * @param file
+   */
+  public void validateFileForAdd(int postNo, MultipartFile file) {
+    int fileCnt = fileInfoRepository.countAllByPostNo(postNo);
+    if(fileCnt > 5) {
+      new CustomException("첨부 파일은 5개 이하입니다.", HttpStatus.BAD_REQUEST);
+    }
+    if (!FileUtil.isImageExtension(file.getOriginalFilename())) {
+      throw new CustomException("지원하지 않는 이미지 형식입니다.", HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  /**
    * 파일 업로드
    * @param postNo
    * @param files
    * @throws Exception
    */
-  public void uploadFile(int postNo, List<MultipartFile> files) throws Exception  {
-    int seq = 0;
+  public void uploadFilesByPostNo(int postNo, List<MultipartFile> files) throws Exception  {
     try {
       for (MultipartFile file : files) {
         String fileName = FileUtil.generateFileName(file.getOriginalFilename());
-        //로컬 경로에 업로드
-        File uploadFile = new File(Constants.FILES_FOLDER_PATH +fileName);
-        FileOutputStream fileOutputStream = new FileOutputStream(uploadFile);
-        fileOutputStream.write(uploadFile.toString().getBytes());
-        fileOutputStream.close();
-        //s3 bucket 업로드
-        uploadS3(uploadFile, fileName);
+        File uploadFile = createFileAndUploadToS3(file, fileName);
         //db에 저장
-        saveFile(postNo,++seq,fileName);
+        saveFile(postNo,fileName);
         //로컬 파일 삭제
         uploadFile.delete();
       }
-
     } catch (Exception e) {
       log.error("[FILE UPLOAD] failed:", e);
       throw new CustomException("파일 업로드 실패", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -116,27 +123,59 @@ public class FileInfoService {
   }
 
   /**
+   * 첨부파일 추가
+   * @param postNo
+   * @param file
+   */
+  public void addFileByPostNo(int postNo, MultipartFile file) {
+    //첨부파일 유효성 검증
+    validateFileForAdd(postNo,file);
+    try {
+      String fileName = FileUtil.generateFileName(file.getOriginalFilename());
+      //로컬 경로에 업로드
+      File uploadFile = createFileAndUploadToS3(file, fileName);
+      //db에 저장
+      saveFile(postNo,fileName);
+      //로컬 파일 삭제
+      uploadFile.delete();
+    } catch (Exception e) {
+      log.error("[FILE UPLOAD] failed:", e);
+      throw new CustomException("파일 업로드 실패", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  private File createFileAndUploadToS3(MultipartFile file, String fileName) {
+    try {
+      File uploadFile = new File(Constants.FILES_FOLDER_PATH + fileName);
+      FileOutputStream fileOutputStream = new FileOutputStream(uploadFile);
+      fileOutputStream.write(uploadFile.toString().getBytes());
+      fileOutputStream.close();
+      uploadS3(uploadFile, fileName);
+      return uploadFile;
+    } catch (Exception e) {
+      log.error("[CREATE FILE STREAM] failed:", e);
+      throw new CustomException("파일 스트림 생성 실패", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  /**
    * 업로드한 파일 정보를 db에 저장
    * @param postNo
-   * @param seq
    * @param name
    */
-  private void saveFile(int postNo, Integer seq, String name){
-    FileInfo fileInfo = createPendingFileInfo(postNo,seq,name);
+  private void saveFile(int postNo, String name){
+    FileInfo fileInfo = createPendingFileInfo(postNo,name);
     fileInfoRepository.save(fileInfo);
   }
 
   /**
    * fileinfo 객체 생성
    * @param postNo
-   * @param seq
    * @param name
    * @return
    */
-  private FileInfo createPendingFileInfo(int postNo, int seq, String name) {
+  private FileInfo createPendingFileInfo(int postNo, String name) {
     return FileInfo.builder()
             .postNo(postNo)
-            .seq(seq)
             .name(name)
             .build();
   }

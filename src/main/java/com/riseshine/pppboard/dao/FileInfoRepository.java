@@ -11,5 +11,8 @@ public interface FileInfoRepository extends JpaRepository<FileInfo, Integer>, Jp
 
   Optional<List<FileInfo>> findByPostNoOrderBySeqAsc(int postNo);
   Optional<FileInfo> findByNo(int no);
+  Optional<FileInfo> findFirstByPostNoOrderBySeqDesc(int postNo);
+  int countAllByPostNo(int postNo);
   void deleteByNo(int no);
+
 }
