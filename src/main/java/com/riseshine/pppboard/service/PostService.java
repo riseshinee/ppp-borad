@@ -1,16 +1,19 @@
 package com.riseshine.pppboard.service;
 
-import com.riseshine.pppboard.common.utils.CommonUtil;
-import com.riseshine.pppboard.controller.userDto.UserCraeteReqDTO;
-import com.riseshine.pppboard.domain.User;
+import com.riseshine.pppboard.controller.fileInfoDto.FileInfoGetResDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.riseshine.pppboard.common.exception.CustomException;
 import com.riseshine.pppboard.domain.Post;
 import com.riseshine.pppboard.dao.PostRepository;
-import com.riseshine.pppboard.controller.postDto.PostCraeteReqDTO;
+import com.riseshine.pppboard.controller.postDto.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -19,30 +22,80 @@ import com.riseshine.pppboard.controller.postDto.PostCraeteReqDTO;
 public class PostService {
 
   private final PostRepository postRepository;
+  private final FileInfoService fileinfoService;
 
   /**
    * 게시글 생성
    * @param userNo
    * @param userName
-   * @param createPostDto
+   * @param title
+   * @param content
    * @return
    */
-  public Integer savePost(Integer userNo, String userName, PostCraeteReqDTO createPostDto) {
-    Post post = createPendingPost(userNo, userName, createPostDto);
+  public int savePost(int userNo, String userName, String title, String content) {
+    Post post = createPendingPost(userNo, userName, title, content);
     return postRepository.save(post).getNo();
   }
 
   /**
-   * post 객체 생성
-   * @param createPostDto
+   * 게시글 조회
+   * @param no
+   * @return
+   * @throws Exception
+   */
+  public PostGetResDTO getPost(int no) throws Exception {
+    Post post = postRepository.findFirstByNo(no).orElseThrow(() ->
+            new CustomException("게시글이 존재하지 않습니다.", HttpStatus.BAD_REQUEST)
+    );
+    //첨부 이미지 리스트 return
+    List<FileInfoGetResDTO> fileInfos = fileinfoService.getFilesByPostNo(no);
+    PostGetResDTO result = getPendingPost(post);
+    //첨부 이미지 리스트 추가
+    result.setFileInfos(fileInfos);
+    return result;
+  }
+
+  /**
+   * 게시글 수정
+   * @param no
+   * @param title
+   * @param content
    * @return
    */
-  private Post createPendingPost(Integer userNo, String userName, PostCraeteReqDTO createPostDto) {
+  public int putPost(int no, String title, String content) {
+    //게시글 업데이트
+    postRepository.updateByNo(no,title,content);
+    return no;
+  }
+
+  /**
+   * post 객체 생성
+   * @param userNo
+   * @param userName
+   * @param title
+   * @param content
+   * @return
+   */
+  private Post createPendingPost(int userNo, String userName, String title, String content) {
     return Post.builder()
             .userNo(userNo)
             .userName(userName)
-            .title(createPostDto.getTitle())
-            .content(createPostDto.getContent())
+            .title(title)
+            .content(content)
+            .build();
+  }
+
+  /**
+   * PostGetResDTO 객체 생성
+   * @param post
+   * @return
+   */
+  private PostGetResDTO getPendingPost(Post post) {
+    return PostGetResDTO.builder()
+            .userNo(post.getUserNo())
+            .userName(post.getUserName())
+            .title(post.getTitle())
+            .content(post.getContent())
             .build();
   }
 }
