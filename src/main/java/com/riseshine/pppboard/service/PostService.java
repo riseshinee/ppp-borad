@@ -11,6 +11,7 @@ import com.riseshine.pppboard.common.exception.CustomException;
 import com.riseshine.pppboard.domain.Post;
 import com.riseshine.pppboard.dao.PostRepository;
 import com.riseshine.pppboard.controller.postDto.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -54,10 +55,14 @@ public class PostService {
     return result;
   }
 
+  /**
+   * 게시글 수정
+   * @param no
+   * @param title
+   * @param content
+   * @return
+   */
   public int putPost(int no, String title, String content) {
-    //게시글 조회
-    postRepository.findFirstByNo(no).orElseThrow(() ->
-            new CustomException("게시글이 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
     //게시글 업데이트
     postRepository.updateByNo(no,title,content);
     return no;
