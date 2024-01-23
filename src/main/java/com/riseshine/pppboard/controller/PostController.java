@@ -38,7 +38,7 @@ public class PostController {
     int postNo = postService.savePost(userNo, findUser.getName(), title, content);
     //첨부 이미지 업로드
     if (checkFileValidated) {
-      fileService.uploadFile(postNo, file);
+      fileService.uploadFilesByPostNo(postNo, file);
     }
     ResponseWrapper<Integer> responseWrapper = new ResponseWrapper<>();
     responseWrapper.setData(postNo);
@@ -62,6 +62,5 @@ public class PostController {
     responseWrapper.setData(postService.putPost(no, title, content));
     return responseWrapper;
   }
-
 
 }
