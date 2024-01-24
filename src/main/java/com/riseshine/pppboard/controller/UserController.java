@@ -22,7 +22,7 @@ public class UserController {
 
     @PostMapping("/")
     @Operation(summary = "회원가입")
-    public ResponseWrapper<UserCreateResDTO> saveUser(@RequestBody @Valid UserCraeteReqDTO user) throws Exception {
+    public ResponseWrapper<UserCreateResDTO> saveUser(@RequestBody @Valid UserCraeteReqDTO user) {
         ResponseWrapper<UserCreateResDTO> responseWrapper = new ResponseWrapper<>();
         responseWrapper.setData(userService.saveUser(user));
         return responseWrapper;
@@ -30,7 +30,7 @@ public class UserController {
 
     @PutMapping("/{no}")
     @Operation(summary = "회원정보수정")
-    public ResponseWrapper<Integer> putUser(@PathVariable("no") Integer no, @RequestBody @Valid UserUpdateReqDTO user) throws Exception {
+    public ResponseWrapper<Integer> putUser(@PathVariable("no") Integer no, @RequestBody @Valid UserUpdateReqDTO user) {
         ResponseWrapper<Integer> responseWrapper = new ResponseWrapper<>();
         responseWrapper.setData(userService.putUser(no, user));
         return responseWrapper;
@@ -38,7 +38,7 @@ public class UserController {
 
     @GetMapping("/{no}")
     @Operation(summary = "회원 정보 조회")
-    public ResponseWrapper<UserGetResDTO> getUser(@PathVariable("no") int no) throws Exception {
+    public ResponseWrapper<UserGetResDTO> getUser(@PathVariable("no") int no) {
         ResponseWrapper<UserGetResDTO> responseWrapper = new ResponseWrapper<>();
         responseWrapper.setData(userService.getUser(no));
         return responseWrapper;
@@ -46,7 +46,7 @@ public class UserController {
 
     @PostMapping("/login")
     @Operation(summary = "로그인")
-    public ResponseWrapper<String> login(@RequestBody @Valid UserLoginReqDTO user) throws Exception {
+    public ResponseWrapper<String> login(@RequestBody @Valid UserLoginReqDTO user) {
         ResponseWrapper<String> responseWrapper = new ResponseWrapper<>();
         responseWrapper.setData(userService.login(user));
         return responseWrapper;
@@ -57,6 +57,4 @@ public class UserController {
     public void logout(HttpSession session) {
         session.invalidate();
     }
-
-
 }

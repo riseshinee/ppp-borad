@@ -30,7 +30,7 @@ public class FileInfoController {
   @PostMapping(value = "/{postNo}", consumes = "multipart/form-data")
   @Operation(summary = "첨부 파일 추가")
   public void addFile(@PathVariable("postNo") int postNo,
-                     @RequestParam("file") MultipartFile file) throws Exception {
+                     @RequestParam("file") MultipartFile file) {
     fileInfoService.validateFileForAdd(postNo,file);
     List<MultipartFile> files = new ArrayList<>();
     files.add(file);

@@ -37,7 +37,6 @@ public class FileInfoService {
     if( files.size() > 5) {
       throw new CustomException("이미지는 최대 5개까지 업로드 가능합니다.", HttpStatus.BAD_REQUEST);
     }
-
     for (MultipartFile file : files) {
       if (!FileUtil.isImageExtension(file.getOriginalFilename())) {
         throw new CustomException("지원하지 않는 이미지 형식입니다.", HttpStatus.BAD_REQUEST);
@@ -67,7 +66,7 @@ public class FileInfoService {
    * @param files
    * @throws Exception
    */
-  public void uploadFilesByPostNo(int postNo, List<MultipartFile> files) throws Exception  {
+  public void uploadFilesByPostNo(int postNo, List<MultipartFile> files) {
     try {
       for (MultipartFile file : files) {
         String fileName = FileUtil.generateFileName(file.getOriginalFilename());
@@ -122,39 +121,17 @@ public class FileInfoService {
     }
   }
 
-  /**
-   * 첨부파일 추가
-   * @param postNo
-   * @param file
-   */
-  public void addFileByPostNo(int postNo, MultipartFile file) {
-    //첨부파일 유효성 검증
-    validateFileForAdd(postNo,file);
-    try {
-      String fileName = FileUtil.generateFileName(file.getOriginalFilename());
-      //로컬 경로에 업로드
-      File uploadFile = createFileAndUploadToS3(file, fileName);
-      //db에 저장
-      saveFile(postNo,fileName);
-      //로컬 파일 삭제
-      uploadFile.delete();
-    } catch (Exception e) {
-      log.error("[FILE UPLOAD] failed:", e);
-      throw new CustomException("파일 업로드 실패", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
   private File createFileAndUploadToS3(MultipartFile file, String fileName) {
     try {
       File uploadFile = new File(Constants.FILES_FOLDER_PATH + fileName);
       FileOutputStream fileOutputStream = new FileOutputStream(uploadFile);
-      fileOutputStream.write(uploadFile.toString().getBytes());
+      fileOutputStream.write(file.getBytes());
       fileOutputStream.close();
       uploadS3(uploadFile, fileName);
       return uploadFile;
     } catch (Exception e) {
-      log.error("[CREATE FILE STREAM] failed:", e);
-      throw new CustomException("파일 스트림 생성 실패", HttpStatus.INTERNAL_SERVER_ERROR);
+      log.error("[UPLOAD FILE] failed:", e);
+      throw new CustomException("파일 업로드 실패", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   /**
