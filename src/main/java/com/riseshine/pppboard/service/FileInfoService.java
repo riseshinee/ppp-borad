@@ -124,6 +124,16 @@ public class FileInfoService {
   }
 
   /**
+   * 첨부파일 순서 변경
+   * @param list updateFileInfos
+   */
+  public void updateFileInfo( List<FileInfoUpdateReqDTO> updateFileInfos) {
+    for (FileInfoUpdateReqDTO fileInfos : updateFileInfos ){
+      fileInfoRepository.updateByNo(fileInfos.getNo(), fileInfos.getSeq());
+    }
+  }
+
+  /**
    * 파일 스트림 생성, S3 버킷에 업로드
    * @param file
    * @param fileName

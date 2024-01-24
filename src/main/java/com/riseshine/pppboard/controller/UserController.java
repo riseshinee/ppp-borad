@@ -20,7 +20,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/")
+    @PostMapping()
     @Operation(summary = "회원가입")
     public ResponseWrapper<UserCreateResDTO> saveUser(@RequestBody @Valid UserCraeteReqDTO user) {
         ResponseWrapper<UserCreateResDTO> responseWrapper = new ResponseWrapper<>();

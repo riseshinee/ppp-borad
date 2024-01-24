@@ -23,13 +23,13 @@ public class FileInfoController {
 
   @DeleteMapping("/{no}")
   @Operation(summary = "첨부 파일 삭제")
-  public void deleteFile(@PathVariable("no") int no) {
+  public void deleteFileInfo(@PathVariable("no") int no) {
     fileInfoService.deleteFileByNo(no);
   }
 
   @PostMapping(value = "/{postNo}", consumes = "multipart/form-data")
   @Operation(summary = "첨부 파일 추가")
-  public void addFile(@PathVariable("postNo") int postNo,
+  public void addFileInfo(@PathVariable("postNo") int postNo,
                      @RequestParam("file") MultipartFile file) {
     fileInfoService.validateFileForAdd(postNo,file);
     List<MultipartFile> files = new ArrayList<>();
@@ -37,10 +37,10 @@ public class FileInfoController {
     fileInfoService.uploadFilesByPostNo(postNo, files);
   }
 
-  @PutMapping("/{postNo}")
+  @PutMapping()
   @Operation(summary = "첨부 파일 순서 업데이트")
-  public void updateFile(@RequestBody List<FileInfoUpdateReqDTO> fileInfo ) {
-    //fileInfoService.deleteFileByNo(no);
+  public void updateFileInfo(@RequestBody List<FileInfoUpdateReqDTO> fileInfos ) {
+    fileInfoService.updateFileInfo(fileInfos);
   }
 
 }
