@@ -30,7 +30,7 @@ public class UserService {
    * @return
    * @throws Exception
    */
-  public UserCreateResDTO saveUser(UserCraeteReqDTO createUserDto) throws Exception {
+  public UserCreateResDTO saveUser(UserCraeteReqDTO createUserDto) {
     // 아이디 중복체크
     checkSameIdExists(createUserDto.getId());
 
@@ -51,7 +51,7 @@ public class UserService {
    * @return
    * @throws Exception
    */
-  public int putUser(int no, UserUpdateReqDTO updateUserDto) throws Exception {
+  public int putUser(int no, UserUpdateReqDTO updateUserDto) {
     //유저 조회
     userRepository.findFirstByNo(no).orElseThrow(() ->
             new CustomException("회원 정보가 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
@@ -70,7 +70,7 @@ public class UserService {
    * @return
    * @throws Exception
    */
-  public UserGetResDTO getUser(int no) throws Exception {
+  public UserGetResDTO getUser(int no) {
     User user = userRepository.findFirstByNo(no).orElseThrow(() ->
             new CustomException("회원 정보가 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
 
@@ -82,7 +82,7 @@ public class UserService {
 
   }
 
-  public String login(UserLoginReqDTO loginUserDto) throws Exception {
+  public String login(UserLoginReqDTO loginUserDto) {
     //아이디, 비밀번호 일치 확인
     User user = validateUser(loginUserDto);
     //token 생성
@@ -118,7 +118,7 @@ public class UserService {
    * @param loginUserDto
    * @return
    */
-  private User validateUser(UserLoginReqDTO loginUserDto) throws Exception {
+  private User validateUser(UserLoginReqDTO loginUserDto) {
       User user = userRepository.findFirstById(loginUserDto.getId()).orElseThrow(() ->
               new CustomException("아이디가 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
 

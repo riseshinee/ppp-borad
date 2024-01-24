@@ -37,7 +37,6 @@ public class FileInfoService {
     if( files.size() > 5) {
       throw new CustomException("이미지는 최대 5개까지 업로드 가능합니다.", HttpStatus.BAD_REQUEST);
     }
-
     for (MultipartFile file : files) {
       if (!FileUtil.isImageExtension(file.getOriginalFilename())) {
         throw new CustomException("지원하지 않는 이미지 형식입니다.", HttpStatus.BAD_REQUEST);
@@ -54,7 +53,7 @@ public class FileInfoService {
   public void validateFileForAdd(int postNo, MultipartFile file) {
     int fileCnt = fileInfoRepository.countAllByPostNo(postNo);
     if(fileCnt > 5) {
-      new CustomException("첨부 파일은 5개 이하입니다.", HttpStatus.BAD_REQUEST);
+      throw new CustomException("게시글의 첨부 파일은 5개 이하입니다.", HttpStatus.BAD_REQUEST);
     }
     if (!FileUtil.isImageExtension(file.getOriginalFilename())) {
       throw new CustomException("지원하지 않는 이미지 형식입니다.", HttpStatus.BAD_REQUEST);
@@ -67,13 +66,15 @@ public class FileInfoService {
    * @param files
    * @throws Exception
    */
-  public void uploadFilesByPostNo(int postNo, List<MultipartFile> files) throws Exception  {
+  public void uploadFilesByPostNo(int postNo, List<MultipartFile> files) {
     try {
+      //다중파일은 seq를 자동으로 증가시킴, 단일파일은 마지막 seq를 기준으로 증가
+      int seq = files.size() > 1 ? 0 : getLastSeqByPostNo(postNo);
       for (MultipartFile file : files) {
         String fileName = FileUtil.generateFileName(file.getOriginalFilename());
         File uploadFile = createFileAndUploadToS3(file, fileName);
         //db에 저장
-        saveFile(postNo,fileName);
+        saveFile(postNo,++seq,fileName);
         //로컬 파일 삭제
         uploadFile.delete();
       }
@@ -123,47 +124,42 @@ public class FileInfoService {
   }
 
   /**
-   * 첨부파일 추가
-   * @param postNo
-   * @param file
+   * 첨부파일 순서 변경
+   * @param list updateFileInfos
    */
-  public void addFileByPostNo(int postNo, MultipartFile file) {
-    //첨부파일 유효성 검증
-    validateFileForAdd(postNo,file);
-    try {
-      String fileName = FileUtil.generateFileName(file.getOriginalFilename());
-      //로컬 경로에 업로드
-      File uploadFile = createFileAndUploadToS3(file, fileName);
-      //db에 저장
-      saveFile(postNo,fileName);
-      //로컬 파일 삭제
-      uploadFile.delete();
-    } catch (Exception e) {
-      log.error("[FILE UPLOAD] failed:", e);
-      throw new CustomException("파일 업로드 실패", HttpStatus.INTERNAL_SERVER_ERROR);
+  public void updateFileInfo( List<FileInfoUpdateReqDTO> updateFileInfos) {
+    for (FileInfoUpdateReqDTO fileInfos : updateFileInfos ){
+      fileInfoRepository.updateByNo(fileInfos.getNo(), fileInfos.getSeq());
     }
   }
 
+  /**
+   * 파일 스트림 생성, S3 버킷에 업로드
+   * @param file
+   * @param fileName
+   * @return
+   */
   private File createFileAndUploadToS3(MultipartFile file, String fileName) {
     try {
       File uploadFile = new File(Constants.FILES_FOLDER_PATH + fileName);
       FileOutputStream fileOutputStream = new FileOutputStream(uploadFile);
-      fileOutputStream.write(uploadFile.toString().getBytes());
+      fileOutputStream.write(file.getBytes());
       fileOutputStream.close();
       uploadS3(uploadFile, fileName);
       return uploadFile;
     } catch (Exception e) {
-      log.error("[CREATE FILE STREAM] failed:", e);
-      throw new CustomException("파일 스트림 생성 실패", HttpStatus.INTERNAL_SERVER_ERROR);
+      log.error("[UPLOAD FILE] failed:", e);
+      throw new CustomException("파일 업로드 실패", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
   /**
    * 업로드한 파일 정보를 db에 저장
    * @param postNo
    * @param name
    */
-  private void saveFile(int postNo, String name){
-    FileInfo fileInfo = createPendingFileInfo(postNo,name);
+  private void saveFile(int postNo, int seq, String name){
+    FileInfo fileInfo = createPendingFileInfo(postNo, seq, name);
     fileInfoRepository.save(fileInfo);
   }
 
@@ -173,9 +169,10 @@ public class FileInfoService {
    * @param name
    * @return
    */
-  private FileInfo createPendingFileInfo(int postNo, String name) {
+  private FileInfo createPendingFileInfo(int postNo, int seq, String name) {
     return FileInfo.builder()
             .postNo(postNo)
+            .seq(seq)
             .name(name)
             .build();
   }
@@ -192,6 +189,16 @@ public class FileInfoService {
             .name(fileinfo.getName())
             .url(FileUtil.getFileUrl(fileinfo.getCreatedAt(),fileinfo.getName()))
             .build();
+  }
+
+  /**
+   * 마지막 seq를 가져옴
+   * @param postNo
+   * @return
+   * @throws Exception
+   */
+  private int getLastSeqByPostNo(int postNo) throws Exception {
+    return fileInfoRepository.findFirstByPostNoOrderBySeqDesc(postNo).getSeq();
   }
 
   /**

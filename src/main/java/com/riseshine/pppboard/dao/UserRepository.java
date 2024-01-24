@@ -18,7 +18,7 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
 
   //유저 정보 업데이트
   @Modifying
-  @Query(value = "UPDATE `User` SET name= :name, password= :password WHERE no= :no", nativeQuery = true)
+  @Query(value = "UPDATE `user` SET name= :name, password= :password WHERE no= :no", nativeQuery = true)
   void updateByNo(int no, String name, String password);
 
 }

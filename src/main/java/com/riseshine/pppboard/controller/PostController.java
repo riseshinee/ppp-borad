@@ -28,7 +28,7 @@ public class PostController {
   public ResponseWrapper<Integer> savePost(@PathVariable("userNo") int userNo,
                                            @RequestParam("title") String title,
                                            @RequestParam("content") String content,
-                                           @RequestParam("file") List<MultipartFile> file) throws Exception {
+                                           @RequestParam("file") List<MultipartFile> file) {
 
     //첨부 파일 유효성 검증
     boolean checkFileValidated = fileService.validateFile(file);
