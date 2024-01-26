@@ -11,7 +11,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.riseshine.pppboard.common.Constants;
 import com.riseshine.pppboard.common.utils.FileUtil;
@@ -128,8 +130,12 @@ public class FileInfoService {
    * @param list updateFileInfos
    */
   public void updateFileInfo( List<FileInfoUpdateReqDTO> updateFileInfos) {
-    for (FileInfoUpdateReqDTO fileInfos : updateFileInfos ){
-      fileInfoRepository.updateByNo(fileInfos.getNo(), fileInfos.getSeq());
+    Set<Integer> seqSet = new HashSet<>();
+    for (FileInfoUpdateReqDTO fileInfo : updateFileInfos ){
+      if (!seqSet.add(fileInfo.getSeq())) {
+        throw new CustomException("중복된 파일 순서가 발견되었습니다.", HttpStatus.BAD_REQUEST);
+      }
+      fileInfoRepository.updateByNo(fileInfo.getNo(), fileInfo.getSeq());
     }
   }
 
