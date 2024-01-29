@@ -63,4 +63,10 @@ public class PostController {
     return responseWrapper;
   }
 
+  @DeleteMapping("/{no}")
+  @Operation(summary = "게시글 삭제")
+  public void deletePost(@PathVariable("no") Integer no) {
+    postService.deletePost(no);
+  }
+
 }
