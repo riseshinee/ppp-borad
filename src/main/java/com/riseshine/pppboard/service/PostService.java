@@ -69,6 +69,14 @@ public class PostService {
   }
 
   /**
+   * 게시글 삭제 (delete 필드만 업데이트 함, 실제 삭제 X)
+   * @param no
+   */
+  public void deletePost(int no) {
+    postRepository.deleteByNo(no);
+  }
+
+  /**
    * post 객체 생성
    * @param userNo
    * @param userName

@@ -16,4 +16,9 @@ public interface PostRepository extends JpaRepository<Post, Integer>, JpaSpecifi
   @Modifying
   @Query(value = "UPDATE `Post` SET title= :title, content= :content WHERE no= :no", nativeQuery = true)
   void updateByNo(int no, String title, String content);
+
+  @Modifying
+  @Query(value = "UPDATE `Post` SET delete_yn = 1, deleted_at = NOW() WHERE no= :no", nativeQuery = true)
+  void deleteByNo(int no);
+
 }
