@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 import com.riseshine.pppboard.service.UserService;
@@ -67,6 +69,17 @@ public class PostController {
   @Operation(summary = "게시글 삭제")
   public void deletePost(@PathVariable("no") Integer no) {
     postService.deletePost(no);
+  }
+
+  @GetMapping("")
+  @Operation(summary = "게시글 리스트")
+  public ResponseWrapper<PostListGetResDTO> getList(
+          @RequestParam(value = "title", defaultValue = "") String title,
+          @RequestParam(value = "content", defaultValue = "") String content,
+          Pageable pageable) {
+    ResponseWrapper<PostListGetResDTO> responseWrapper = new ResponseWrapper<>();
+    responseWrapper.setData(postService.getPostList(title, content, pageable));
+    return responseWrapper;
   }
 
 }

@@ -27,6 +27,11 @@ jpa:
       format_sql: true
       ddl-auto: update
 
+logging:
+  level:
+    org.hibernate:
+      SQL: DEBUG
+      type.descriptor.sql: trace
 ---
 # local
 server:
@@ -52,5 +57,5 @@ cloud:
     s3:
       bucket: pppboard
     credentials:
-        access-key: AKIAR76JUCXMW57E6MGJ
-        secret-key: 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
+        access-key: AKIAR76JUCXM2MDME3UG
+        secret-key: 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
