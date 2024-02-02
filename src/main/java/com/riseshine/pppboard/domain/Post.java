@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,18 +64,18 @@ public class Post extends BaseEntity {
    * 생성 시간
    */
   @Column(name = "created_at", columnDefinition = "DATETIME")
-  String createdAt;
+  LocalDateTime createdAt;
 
   /**
    * 업데이트 시간
    */
   @Column(name = "updated_at", columnDefinition = "DATETIME")
-  String updatedAt;
+  LocalDateTime updatedAt;
 
   /**
    * 삭제 시간
    */
   @Column(name = "deleted_at", columnDefinition = "DATETIME")
-  String deletedAt;
+  LocalDateTime deletedAt;
 
 }

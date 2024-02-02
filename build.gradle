@@ -41,6 +41,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'com.mysql:mysql-connector-j'
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
 
 	implementation platform('software.amazon.awssdk:bom:2.20.139')
 	implementation 'software.amazon.awssdk:s3'
