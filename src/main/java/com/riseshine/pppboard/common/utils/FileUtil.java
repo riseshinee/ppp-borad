@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
@@ -50,7 +51,7 @@ public class FileUtil {
    * @return
    * @throws ParseException
    */
-  public static String getFileUrl(String createdAt, String fileName) throws ParseException {
+  public static String getFileUrl(LocalDateTime createdAt, String fileName) throws ParseException {
     String yearMonth = getFileYearMonth(createdAt);
     return Constants.AWS_S3_CLOUDFRONT_URL + yearMonth + "/" + fileName;
   }
@@ -62,7 +63,7 @@ public class FileUtil {
    * @return
    * @throws ParseException
    */
-  public static String getFilePath(String createdAt, String fileName) throws ParseException {
+  public static String getFilePath(LocalDateTime createdAt, String fileName) throws ParseException {
     String yearMonth = getFileYearMonth(createdAt);
     return yearMonth + "/" + fileName;
   }
@@ -100,10 +101,11 @@ public class FileUtil {
    * @return
    * @throws ParseException
    */
-  private static String getFileYearMonth(String inputDateTime) throws ParseException {
-    SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+  private static String getFileYearMonth(LocalDateTime inputDateTime) throws ParseException {
     SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy/M");
-    Date date = inputFormat.parse(inputDateTime);
+    // LocalDateTime to Date conversion
+    Date date = Date.from(inputDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
     return outputFormat.format(date);
   }
 }

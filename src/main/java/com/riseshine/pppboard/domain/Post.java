@@ -61,18 +61,6 @@ public class Post extends BaseEntity {
   Integer deleteYn;
 
   /**
-   * 생성 시간
-   */
-  @Column(name = "created_at", columnDefinition = "DATETIME")
-  LocalDateTime createdAt;
-
-  /**
-   * 업데이트 시간
-   */
-  @Column(name = "updated_at", columnDefinition = "DATETIME")
-  LocalDateTime updatedAt;
-
-  /**
    * 삭제 시간
    */
   @Column(name = "deleted_at", columnDefinition = "DATETIME")

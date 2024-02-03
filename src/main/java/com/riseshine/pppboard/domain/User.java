@@ -47,18 +47,6 @@ public class User extends BaseEntity {
     String passsword;
 
     /**
-     * 생성 시간
-     */
-    @Column(name = "created_at", columnDefinition = "DATETIME")
-    String createdAt;
-
-    /**
-     * 업데이트 시간
-     */
-    @Column(name = "updated_at", columnDefinition = "DATETIME")
-    String updatedAt;
-
-    /**
      * role collection
      */
     /*
