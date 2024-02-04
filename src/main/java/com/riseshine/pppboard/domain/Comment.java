@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @DynamicUpdate
 @NoArgsConstructor
 @AllArgsConstructor
-public class Post extends BaseEntity {
+public class Comment extends BaseEntity {
   /**
    * no
    */
@@ -29,6 +29,12 @@ public class Post extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "no")
   Integer no;
+
+  /**
+   * 부모 댓글 no
+   */
+  @Column(name = "parent_no")
+  Integer parentNo;
 
   /**
    * User no
@@ -43,27 +49,10 @@ public class Post extends BaseEntity {
   String userName;
 
   /**
-   * 제목
-   */
-  @Column(name = "title")
-  String title;
-
-  /**
    * 내용
    */
   @Column(name = "content")
   String content;
 
-  /**
-   * 삭제여부 (0: 삭제안됨, 1:삭제됨)
-   */
-  @Column(name = "delete_yn")
-  Integer deleteYn;
-
-  /**
-   * 삭제 시간
-   */
-  @Column(name = "deleted_at", columnDefinition = "DATETIME")
-  LocalDateTime deletedAt;
 
 }
