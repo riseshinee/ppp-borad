@@ -57,5 +57,5 @@ cloud:
     s3:
       bucket: pppboard
     credentials:
-        access-key: AKIAR76JUCXM2MDME3UG
-        secret-key: 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
+        access-key: ""
+        secret-key: ""
