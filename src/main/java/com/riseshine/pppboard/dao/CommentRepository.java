@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<Comment, Integer>, JpaSpecificationExecutor<Comment> {
   Optional<Comment> findFirstByNo(int no);
 
+  void deleteByNo(int no);
+
   @Modifying
   @Query(value = "UPDATE `comment` SET content= :content WHERE no= :no", nativeQuery = true)
   void updateByNo(int no, String content);
