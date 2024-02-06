@@ -1,14 +1,15 @@
 package com.riseshine.pppboard.service;
 
-import com.riseshine.pppboard.common.exception.CustomException;
-import com.riseshine.pppboard.controller.commnetDto.*;
-import com.riseshine.pppboard.dao.CommentRepository;
-import com.riseshine.pppboard.domain.Comment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.riseshine.pppboard.common.exception.CustomException;
+import com.riseshine.pppboard.controller.commnetDto.*;
+import com.riseshine.pppboard.dao.CommentRepository;
+import com.riseshine.pppboard.domain.Comment;
 
 @Service
 @Slf4j
@@ -28,6 +29,18 @@ public class CommentService {
     Comment comment = createPendingComment(createCommentDto, userName);
     return commentRepository.save(comment).getNo();
 
+  }
+
+  /**
+   * 댓글 수정
+   * @param no
+   * @param content
+   * @return
+   */
+  public int putComment(int no, String content) {
+    commentRepository.updateByNo(no,
+            content);
+    return no;
   }
 
   /**

@@ -2,10 +2,7 @@ package com.riseshine.pppboard.controller;
 
 import com.riseshine.pppboard.controller.userDto.UserGetResDTO;
 import com.riseshine.pppboard.service.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -31,6 +28,14 @@ public class CommentController {
     UserGetResDTO findUser = userService.getUser(comment.getUserNo());
     ResponseWrapper<Integer> responseWrapper = new ResponseWrapper<>();
     responseWrapper.setData(commentService.saveComment(comment,findUser.getName()));
+    return responseWrapper;
+  }
+
+  @PutMapping("/{no}")
+  @Operation(summary = "댓글수정")
+  public ResponseWrapper<Integer> putUser(@PathVariable("no") int no, @RequestParam("content") String content) {
+    ResponseWrapper<Integer> responseWrapper = new ResponseWrapper<>();
+    responseWrapper.setData(commentService.putComment(no, content));
     return responseWrapper;
   }
 
