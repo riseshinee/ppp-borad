@@ -31,13 +31,19 @@ public class Comment extends BaseEntity {
   Integer no;
 
   /**
-   * 부모 댓글 no
+   * 부모 댓글 PK
    */
   @Column(name = "parent_no")
   Integer parentNo;
 
   /**
-   * User no
+   * 게시글 PK
+   */
+  @Column(name = "post_no")
+  Integer postNo;
+
+  /**
+   * User PK
    */
   @Column(name = "user_no")
   Integer userNo;
