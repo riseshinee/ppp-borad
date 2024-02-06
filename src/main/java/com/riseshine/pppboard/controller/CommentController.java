@@ -33,10 +33,17 @@ public class CommentController {
 
   @PutMapping("/{no}")
   @Operation(summary = "댓글수정")
-  public ResponseWrapper<Integer> putUser(@PathVariable("no") int no, @RequestParam("content") String content) {
+  public ResponseWrapper<Integer> putCommnet(@PathVariable("no") int no, @RequestParam("content") String content) {
     ResponseWrapper<Integer> responseWrapper = new ResponseWrapper<>();
     responseWrapper.setData(commentService.putComment(no, content));
     return responseWrapper;
   }
+
+  @DeleteMapping("/{no}")
+  @Operation(summary = "댓글 삭제")
+  public void deleteCommnet(@PathVariable("no") int no) {
+    commentService.deleteCommnetByNo(no);
+  }
+
 
 }
