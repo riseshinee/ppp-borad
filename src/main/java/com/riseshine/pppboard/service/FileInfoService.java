@@ -145,7 +145,7 @@ public class FileInfoService {
    * @param fileName
    * @return
    */
-  private File createFileAndUploadToS3(MultipartFile file, String fileName) {
+  protected File createFileAndUploadToS3(MultipartFile file, String fileName) {
     try {
       File uploadFile = new File(Constants.FILES_FOLDER_PATH + fileName);
       FileOutputStream fileOutputStream = new FileOutputStream(uploadFile);
@@ -164,7 +164,7 @@ public class FileInfoService {
    * @param postNo
    * @param name
    */
-  private void saveFile(int postNo, int seq, String name){
+  protected void saveFile(int postNo, int seq, String name){
     FileInfo fileInfo = createPendingFileInfo(postNo, seq, name);
     fileInfoRepository.save(fileInfo);
   }
@@ -175,7 +175,7 @@ public class FileInfoService {
    * @param name
    * @return
    */
-  private FileInfo createPendingFileInfo(int postNo, int seq, String name) {
+  protected FileInfo createPendingFileInfo(int postNo, int seq, String name) {
     return FileInfo.builder()
             .postNo(postNo)
             .seq(seq)
@@ -189,7 +189,7 @@ public class FileInfoService {
    * @return
    * @throws ParseException
    */
-  private FileInfoGetResDTO getPendingFileInfo(FileInfo fileinfo) throws ParseException {
+  protected FileInfoGetResDTO getPendingFileInfo(FileInfo fileinfo) throws ParseException {
     return FileInfoGetResDTO.builder()
             .seq(fileinfo.getSeq())
             .name(fileinfo.getName())
@@ -203,7 +203,7 @@ public class FileInfoService {
    * @return
    * @throws Exception
    */
-  private int getLastSeqByPostNo(int postNo) throws Exception {
+  protected int getLastSeqByPostNo(int postNo) throws Exception {
     return fileInfoRepository.findFirstByPostNoOrderBySeqDesc(postNo).getSeq();
   }
 
@@ -212,7 +212,7 @@ public class FileInfoService {
    * @param file
    * @param fileName
    */
-  private void uploadS3(File file, String fileName) {
+  protected void uploadS3(File file, String fileName) {
     String uploadPath = String.format("%s/%s/%s",
             FileUtil.getCurrentYear(),
             FileUtil.getCurrentMonth(),

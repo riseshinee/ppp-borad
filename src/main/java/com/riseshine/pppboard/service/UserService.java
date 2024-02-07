@@ -89,45 +89,45 @@ public class UserService {
     return jwtTokenProvider.createToken(user.getId());
   }
 
-    /**
-     * 아이디 중복 체크
-     * @param id
-     * @return
-     */
-    private void checkSameIdExists(String id) {
-     userRepository.findFirstById(id).ifPresent(user -> {
-        throw new CustomException("중복된 아이디가 존재합니다.", HttpStatus.BAD_REQUEST);
-      });
-    }
+  /**
+   * 아이디 중복 체크
+   * @param id
+   * @return
+   */
+  private void checkSameIdExists(String id) {
+    userRepository.findFirstById(id).ifPresent(user -> {
+      throw new CustomException("중복된 아이디가 존재합니다.", HttpStatus.BAD_REQUEST);
+    });
+  }
 
-    /**
-     * user 객체 생성
-     * @param createUserDto
-     * @return
-     */
-    private User createPendingUser(UserCraeteReqDTO createUserDto) {
-      return User.builder()
-              .id(createUserDto.getId())
-              .name(createUserDto.getName())
-              .passsword(CommonUtil.dbEncrypt(createUserDto.getPassword()))
-              .build();
-    }
+  /**
+   * user 객체 생성
+   * @param createUserDto
+   * @return
+   */
+  protected User createPendingUser(UserCraeteReqDTO createUserDto) {
+    return User.builder()
+            .id(createUserDto.getId())
+            .name(createUserDto.getName())
+            .passsword(CommonUtil.dbEncrypt(createUserDto.getPassword()))
+            .build();
+  }
 
   /**
    * 로그인 시 유저 유효성 검증
    * @param loginUserDto
    * @return
    */
-  private User validateUser(UserLoginReqDTO loginUserDto) {
-      User user = userRepository.findFirstById(loginUserDto.getId()).orElseThrow(() ->
-              new CustomException("아이디가 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
+  protected User validateUser(UserLoginReqDTO loginUserDto) {
+    User user = userRepository.findFirstById(loginUserDto.getId()).orElseThrow(() ->
+            new CustomException("아이디가 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
 
-      String getPassword = CommonUtil.dbDecrypt(user.getPasssword());
-      if(!Objects.equals(getPassword, loginUserDto.getPassword())){
-        throw new CustomException("비밀번호가 일치하지 않습니다..", HttpStatus.BAD_REQUEST);
-      }
-
-      return user;
+    String getPassword = CommonUtil.dbDecrypt(user.getPasssword());
+    if(!Objects.equals(getPassword, loginUserDto.getPassword())){
+      throw new CustomException("비밀번호가 일치하지 않습니다..", HttpStatus.BAD_REQUEST);
     }
+
+    return user;
+  }
 
 }

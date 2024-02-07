@@ -14,6 +14,9 @@ import com.riseshine.pppboard.dao.CommentRepository;
 import com.riseshine.pppboard.domain.Comment;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -56,10 +59,29 @@ public class CommentService {
   }
 
   /**
+   * 부모 댓글 리스트 조회
+   * @param postNo
+   * @return
+   */
+  public List<CommentGetResDTO> getCommentList(int postNo) {
+    List<CommentGetResDTO> result = new ArrayList<>();
+    commentRepository.findAllByPostNoAndParentNoIsNull(postNo).ifPresent(commnets -> {
+      for( Comment comment : commnets){
+        CommentGetResDTO commentDto = CommentGetResDTO.builder()
+                .userName(comment.getUserName())
+                .content(comment.getContent())
+                .build();
+        result.add(commentDto);
+      }
+    });
+    return result;
+  }
+
+  /**
    * 댓글의 댓글 생성 유효성 체크
    * @param no
    */
-  private void checkParentValidated(int no) {
+  protected void checkParentValidated(int no) {
     commentRepository.findFirstByNo(no).ifPresent(comment -> {
       if(comment.getParentNo() != null && comment.getParentNo() > 0) {
         throw new CustomException("자식 댓글에는 댓글을 작성할 수 없습니다.", HttpStatus.BAD_REQUEST);
@@ -72,7 +94,7 @@ public class CommentService {
    * @param createCommentDto
    * @return
    */
-  private Comment createPendingComment(CommentCreateReqDTO createCommentDto, String userName){
+  protected Comment createPendingComment(CommentCreateReqDTO createCommentDto, String userName){
     return Comment.builder()
             .parentNo(createCommentDto.getParentNo() > 0 ? createCommentDto.getParentNo() : null)
             .postNo(createCommentDto.getPostNo())

@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import com.riseshine.pppboard.service.CommentService;
 import com.riseshine.pppboard.controller.commnetDto.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/comment")
@@ -45,5 +47,11 @@ public class CommentController {
     commentService.deleteCommnetByNo(no);
   }
 
-
+  @GetMapping("/{postNo}")
+  @Operation(summary = "댓글조회")
+  public ResponseWrapper<List<CommentGetResDTO>> getCommnet(@PathVariable("postNo") int postNo) {
+    ResponseWrapper<List<CommentGetResDTO>> responseWrapper = new ResponseWrapper<>();
+    responseWrapper.setData(commentService.getCommentList(postNo));
+    return responseWrapper;
+  }
 }
