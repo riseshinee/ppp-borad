@@ -88,7 +88,6 @@ public class PostService {
   public PostListGetResDTO getPostList(String title, String content, Pageable pageable) {
 
     Page<Post> result = postListRepository.getList(title,content,pageable);
-
     return PostListGetResDTO.builder()
             .postList(result.getContent())
             .totalCount(result.getTotalElements())
@@ -105,7 +104,7 @@ public class PostService {
    * @param content
    * @return
    */
-  private Post createPendingPost(int userNo, String userName, String title, String content) {
+  protected Post createPendingPost(int userNo, String userName, String title, String content) {
     return Post.builder()
             .userNo(userNo)
             .userName(userName)
@@ -119,7 +118,7 @@ public class PostService {
    * @param post
    * @return
    */
-  private PostGetResDTO getPendingPost(Post post) {
+  protected PostGetResDTO getPendingPost(Post post) {
     return PostGetResDTO.builder()
             .userNo(post.getUserNo())
             .userName(post.getUserName())
