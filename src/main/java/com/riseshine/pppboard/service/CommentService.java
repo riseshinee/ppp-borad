@@ -68,6 +68,7 @@ public class CommentService {
     commentRepository.findAllByPostNoAndParentNoIsNull(postNo).ifPresent(commnets -> {
       for( Comment comment : commnets){
         CommentGetResDTO commentDto = CommentGetResDTO.builder()
+                .no(comment.getNo())
                 .userName(comment.getUserName())
                 .content(comment.getContent())
                 .build();
