@@ -17,6 +17,8 @@ public interface CommentRepository extends JpaRepository<Comment, Integer>, JpaS
 
   Optional<List<Comment>> findAllByPostNoAndParentNoIsNull(int postNo);
 
+  Optional<List<Comment>> findAllByParentNo(int no);
+
   @Modifying
   @Query(value = "UPDATE `comment` SET content= :content WHERE no= :no", nativeQuery = true)
   void updateByNo(int no, String content);

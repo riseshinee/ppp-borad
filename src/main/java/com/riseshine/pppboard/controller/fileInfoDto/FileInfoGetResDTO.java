@@ -8,8 +8,14 @@ import lombok.Setter;
 @Getter
 @Builder
 public class FileInfoGetResDTO {
-  int seq;
-  String name;
-  String url;
+  private int seq;
+  private String name;
+  private String url;
+
+  public FileInfoGetResDTO(int seq, String name, String url) {
+    this.seq = seq;
+    this.name = name;
+    this.url = url;
+  }
 }
 
