@@ -1,6 +1,7 @@
 package com.riseshine.pppboard.common.utils;
 
 import com.riseshine.pppboard.common.Constants;
+import com.riseshine.pppboard.common.ResultCode;
 import com.riseshine.pppboard.common.exception.CustomException;
 import org.springframework.http.HttpStatus;
 
@@ -36,7 +37,8 @@ public class FileUtil {
    */
   public static String generateFileName(String originName){
     if(originName == null){
-      throw new CustomException("파일명이 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
+      throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
+      //throw new CustomException("파일명이 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
     }
     //파일 확장자 추출
     String fileExtension = getFileExtension(originName);

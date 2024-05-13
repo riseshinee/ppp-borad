@@ -1,6 +1,7 @@
 package com.riseshine.pppboard.provider;
 
 import com.riseshine.pppboard.common.Constants;
+import com.riseshine.pppboard.common.ResultCode;
 import com.riseshine.pppboard.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +44,8 @@ public class AwsS3Service {
       fileUpload.completionFuture().join();
     } catch (S3Exception e) {
       log.error("[AWS S3 UPLOAD] failed: {}", file.getName(), e);
-      throw new CustomException("AWS S3 upload failed", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
+      //throw new CustomException("AWS S3 upload failed", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -56,7 +58,8 @@ public class AwsS3Service {
       s3Client.deleteObject(request);
     } catch (S3Exception e){
       log.error("[AWS S3 DELETE] failed: {}", filePath, e);
-      throw new CustomException("AWS S3 delete failed", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
+      //throw new CustomException("AWS S3 delete failed", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

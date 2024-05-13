@@ -1,10 +1,8 @@
 package com.riseshine.pppboard.service;
 
-import com.riseshine.pppboard.common.utils.FileUtil;
-import com.riseshine.pppboard.domain.FileInfo;
+import com.riseshine.pppboard.common.ResultCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,10 +11,8 @@ import com.riseshine.pppboard.controller.commnetDto.*;
 import com.riseshine.pppboard.dao.CommentRepository;
 import com.riseshine.pppboard.domain.Comment;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -85,7 +81,8 @@ public class CommentService {
   protected void checkParentValidated(int no) {
     commentRepository.findFirstByNo(no).ifPresent(comment -> {
       if(comment.getParentNo() != null && comment.getParentNo() > 0) {
-        throw new CustomException("자식 댓글에는 댓글을 작성할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
+       // throw new CustomException("자식 댓글에는 댓글을 작성할 수 없습니다.", HttpStatus.BAD_REQUEST);
       }
     });
   }

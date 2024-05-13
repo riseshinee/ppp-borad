@@ -1,5 +1,7 @@
 package com.riseshine.pppboard.common.exception;
 
+import com.riseshine.pppboard.common.ResultCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
@@ -10,7 +12,7 @@ import java.util.stream.Collectors;
 public class RestResponse {
   private String code;
   private String message;
-  private int status;
+  private HttpStatus status;
   private List<CustomFieldError> errors;
 
   public static class CustomFieldError{
@@ -63,8 +65,4 @@ public class RestResponse {
     return new RestResponse(errorCode, exceptionMessage);
   }
 
-  public String getCode() { return code; }
-  public String getMessage() { return message; }
-  public int getStatus() { return status; }
-  public List<CustomFieldError> getErrors() { return errors; }
 }

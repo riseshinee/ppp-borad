@@ -1,5 +1,6 @@
 package com.riseshine.pppboard.service;
 
+import com.riseshine.pppboard.common.ResultCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import java.util.List;
@@ -47,7 +48,8 @@ public class PostService {
    */
   public PostGetResDTO getPost(int no) throws Exception {
     Post post = postRepository.findFirstByNo(no).orElseThrow(() ->
-            new CustomException("게시글이 존재하지 않습니다.", HttpStatus.BAD_REQUEST)
+                    new CustomException(ResultCode.INTERNAL_SERVER_ERROR)
+           // new CustomException("게시글이 존재하지 않습니다.", HttpStatus.BAD_REQUEST)
     );
     //첨부 이미지 리스트 return
     List<FileInfoGetResDTO> fileInfos = fileinfoService.getFilesByPostNo(no);

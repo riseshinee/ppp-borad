@@ -1,8 +1,8 @@
 package com.riseshine.pppboard.service;
 
+import com.riseshine.pppboard.common.ResultCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,11 +37,13 @@ public class FileInfoService {
    */
   public boolean validateFile(List<MultipartFile> files) {
     if( files.size() > 5) {
-      throw new CustomException("이미지는 최대 5개까지 업로드 가능합니다.", HttpStatus.BAD_REQUEST);
+      throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
+      //throw new CustomException("이미지는 최대 5개까지 업로드 가능합니다.", HttpStatus.BAD_REQUEST);
     }
     for (MultipartFile file : files) {
       if (!FileUtil.isImageExtension(file.getOriginalFilename())) {
-        throw new CustomException("지원하지 않는 이미지 형식입니다.", HttpStatus.BAD_REQUEST);
+        throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
+        //throw new CustomException("지원하지 않는 이미지 형식입니다.", HttpStatus.BAD_REQUEST);
       }
     }
     return !files.isEmpty();
@@ -55,10 +57,12 @@ public class FileInfoService {
   public void validateFileForAdd(int postNo, MultipartFile file) {
     int fileCnt = fileInfoRepository.countAllByPostNo(postNo);
     if(fileCnt > 5) {
-      throw new CustomException("게시글의 첨부 파일은 5개 이하입니다.", HttpStatus.BAD_REQUEST);
+      throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
+      //throw new CustomException("게시글의 첨부 파일은 5개 이하입니다.", HttpStatus.BAD_REQUEST);
     }
     if (!FileUtil.isImageExtension(file.getOriginalFilename())) {
-      throw new CustomException("지원하지 않는 이미지 형식입니다.", HttpStatus.BAD_REQUEST);
+      throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
+      //throw new CustomException("지원하지 않는 이미지 형식입니다.", HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -82,7 +86,8 @@ public class FileInfoService {
       }
     } catch (Exception e) {
       log.error("[FILE UPLOAD] failed:", e);
-      throw new CustomException("파일 업로드 실패", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
+      //throw new CustomException("파일 업로드 실패", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -113,7 +118,9 @@ public class FileInfoService {
    */
   public void deleteFileByNo(int no) {
     FileInfo fileInfo = fileInfoRepository.findByNo(no).orElseThrow(() ->
-            new CustomException("파일이 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
+                    new CustomException(ResultCode.INTERNAL_SERVER_ERROR)
+    );
+            //new CustomException("파일이 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
     try {
       String filePath = FileUtil.getFilePath(fileInfo.getCreatedAt(), fileInfo.getName());
       //S3 버킷에서 제거
@@ -133,7 +140,8 @@ public class FileInfoService {
     Set<Integer> seqSet = new HashSet<>();
     for (FileInfoUpdateReqDTO fileInfo : updateFileInfos ){
       if (!seqSet.add(fileInfo.getSeq())) {
-        throw new CustomException("중복된 파일 순서가 발견되었습니다.", HttpStatus.BAD_REQUEST);
+        throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
+        //throw new CustomException("중복된 파일 순서가 발견되었습니다.", HttpStatus.BAD_REQUEST);
       }
       fileInfoRepository.updateByNo(fileInfo.getNo(), fileInfo.getSeq());
     }
@@ -155,7 +163,8 @@ public class FileInfoService {
       return uploadFile;
     } catch (Exception e) {
       log.error("[UPLOAD FILE] failed:", e);
-      throw new CustomException("파일 업로드 실패", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
+      //throw new CustomException("파일 업로드 실패", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
