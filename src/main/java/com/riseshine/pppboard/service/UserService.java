@@ -72,8 +72,7 @@ public class UserService {
    */
   public UserGetResDTO getUser(int no) {
     User user = userRepository.findFirstByNo(no).orElseThrow(() ->
-            new CustomException(ResultCode.INTERNAL_SERVER_ERROR)
-            //new CustomException("회원 정보가 존재하지 않습니다.", HttpStatus.BAD_REQUEST)
+            new CustomException(ResultCode.USER_NOT_EXIST)
     );
 
     return UserGetResDTO.builder()
@@ -98,8 +97,7 @@ public class UserService {
    */
   private void checkSameIdExists(String id) {
     userRepository.findFirstById(id).ifPresent(user -> {
-      throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
-      //throw new CustomException("중복된 아이디가 존재합니다.", HttpStatus.BAD_REQUEST);
+      throw new CustomException(ResultCode.ID_DUPLICATION);
     });
   }
 
