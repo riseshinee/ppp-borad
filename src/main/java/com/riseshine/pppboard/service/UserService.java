@@ -121,14 +121,12 @@ public class UserService {
    */
   protected User validateUser(UserLoginReqDTO loginUserDto) {
     User user = userRepository.findFirstById(loginUserDto.getId()).orElseThrow(() ->
-                    new CustomException(ResultCode.INTERNAL_SERVER_ERROR)
-            //new CustomException("아이디가 존재하지 않습니다.", HttpStatus.BAD_REQUEST)
+                    new CustomException(ResultCode.ID_NOT_EXIST)
     );
 
     String getPassword = CommonUtil.dbDecrypt(user.getPasssword());
     if(!Objects.equals(getPassword, loginUserDto.getPassword())){
-      throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
-      //throw new CustomException("비밀번호가 일치하지 않습니다..", HttpStatus.BAD_REQUEST);
+      throw new CustomException(ResultCode.PASSWORD_INVALID);
     }
 
     return user;
