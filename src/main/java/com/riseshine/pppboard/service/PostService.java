@@ -46,10 +46,9 @@ public class PostService {
    * @return
    * @throws Exception
    */
-  public PostGetResDTO getPost(int no) throws Exception {
+  public PostGetResDTO getPost(int no) {
     Post post = postRepository.findFirstByNo(no).orElseThrow(() ->
-                    new CustomException(ResultCode.INTERNAL_SERVER_ERROR)
-           // new CustomException("게시글이 존재하지 않습니다.", HttpStatus.BAD_REQUEST)
+                    new CustomException(ResultCode.POST_NOT_EXIST)
     );
     //첨부 이미지 리스트 return
     List<FileInfoGetResDTO> fileInfos = fileinfoService.getFilesByPostNo(no);
