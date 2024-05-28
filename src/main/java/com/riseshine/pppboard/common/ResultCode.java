@@ -20,8 +20,10 @@ public enum ResultCode {
   FILE_TYPE_INVALID(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "PPP_30415", "지원하지 않는 이미지 형식입니다."),
   FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "PPP_30500", "파일 업로드 실패"),
   FILE_NOT_EXIST(HttpStatus.NOT_FOUND, "PPP_30404", "파일이 존재하지 않습니다."),
-  FILE_SEQ_DUPLICATED(HttpStatus.CONFLICT, "PPP_30409", "중복된 파일 순서가 발견되었습니다.");
-
+  FILE_SEQ_DUPLICATED(HttpStatus.CONFLICT, "PPP_30409", "중복된 파일 순서가 발견되었습니다."),
+  REPLY_NOT_ALLOWED(HttpStatus.FORBIDDEN, "PPP_40403", "자식 댓글에는 댓글을 작성할 수 없습니다."),
+  AWS_S3_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "PPP_50500", "S3 업로드를 실패하였습니다."),
+  AWS_S3_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "PPP_51500", "S3 파일 삭제를 실패하였습니다.");
 
   private final HttpStatus status;
   private final String code;

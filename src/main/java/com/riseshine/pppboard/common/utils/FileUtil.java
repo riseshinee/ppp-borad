@@ -37,8 +37,7 @@ public class FileUtil {
    */
   public static String generateFileName(String originName){
     if(originName == null){
-      throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
-      //throw new CustomException("파일명이 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
+      throw new CustomException(ResultCode.FILE_NOT_EXIST);
     }
     //파일 확장자 추출
     String fileExtension = getFileExtension(originName);

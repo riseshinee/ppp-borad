@@ -44,8 +44,7 @@ public class AwsS3Service {
       fileUpload.completionFuture().join();
     } catch (S3Exception e) {
       log.error("[AWS S3 UPLOAD] failed: {}", file.getName(), e);
-      throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
-      //throw new CustomException("AWS S3 upload failed", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new CustomException(ResultCode.AWS_S3_UPLOAD_FAILED);
     }
   }
 
@@ -58,8 +57,7 @@ public class AwsS3Service {
       s3Client.deleteObject(request);
     } catch (S3Exception e){
       log.error("[AWS S3 DELETE] failed: {}", filePath, e);
-      throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
-      //throw new CustomException("AWS S3 delete failed", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new CustomException(ResultCode.AWS_S3_DELETE_FAILED);
     }
   }
 }
