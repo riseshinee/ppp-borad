@@ -81,8 +81,7 @@ public class CommentService {
   protected void checkParentValidated(int no) {
     commentRepository.findFirstByNo(no).ifPresent(comment -> {
       if(comment.getParentNo() != null && comment.getParentNo() > 0) {
-        throw new CustomException(ResultCode.INTERNAL_SERVER_ERROR);
-       // throw new CustomException("자식 댓글에는 댓글을 작성할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        throw new CustomException(ResultCode.REPLY_NOT_ALLOWED);
       }
     });
   }
